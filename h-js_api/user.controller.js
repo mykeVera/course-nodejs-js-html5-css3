@@ -1,18 +1,32 @@
+const Users = require('./user.model');
+
 const User = {
-    get: (req,res) => {
-        res.status(200).send('Getting one');
+    get: async (req,res) => {
+        const id = req.params.id;
+        const user = await Users.findOne({_id: id});
+        res.status(200).send(user);
     },
-    list: (req,res) => {
-        res.status(200).send('Getting');
+    list: async (req,res) => {
+        const users = await Users.find();
+        res.status(200).send(users);
     },
-    create: (req,res) => {
-        res.status(201).send('Creating');
+    create: async (req,res) => {
+        const user = new Users(req.body);
+        const savedUser = await user.save();
+        res.status(201).send(savedUser);
     },
-    update: (req,res) => {
-        res.status(204).send('Updating');
+    update: async (req,res) => {
+        const id = req.params.id;
+        const user = await Users.findOne({_id: id});
+        Object.assign(user, req.body);
+        const updatedUser = await user.save();
+        res.status(200).send(updatedUser);
     },
-    destroy: (req,res) => {
-        res.status(204).send('Deleting');
+    destroy: async (req,res) => {
+        const id = req.params.id;
+        const user = await Users.findOne({_id: id});
+        if(user) await user.deleteOne();
+        res.status(200).send(user);
     }
 }
 
